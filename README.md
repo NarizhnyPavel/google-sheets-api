@@ -65,7 +65,7 @@
 # сборка проекта, прогон unit-тестов
 ./gradlew clean build 
 ```
-4. запускаем docker-compose 
+2. запускаем docker-compose 
 ```shell script
 docker-compose up -d
 ```
