@@ -1,0 +1,28 @@
+name: Build & deploy project
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build project
+        run: ./gradlew build
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ec1129d1-15e0-4d09-bc1d-9d4a770ce8a6
+          heroku_app_name: gooogle-sheets-api
+          heroku_email: narizhy@mail.ru
+          usedocker: true

@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "google-api.clientId",
+      "type": "java.lang.String",
+      "description": "Client id for google sheets api."
+    },
+    {
+      "name": "google-api.clientSecret",
+      "type": "java.lang.String",
+      "description": "Client secret for google sheets api."
+    },
+    {
+      "name": "google-api.refreshToken",
+      "type": "java.lang.String",
+      "description": "Refresh token for google sheets api."
+    },
+    {
+      "name": "jwt.token.secret",
+      "type": "java.lang.String",
+      "description": "Secret for jwt token."
+    },
+    {
+      "name": "jwt.token.expire",
+      "type": "java.lang.String",
+      "description": "Время жизни jwt токена."
+    }
+  ]
+}

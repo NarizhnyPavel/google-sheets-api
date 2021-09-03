@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.app'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.2'
+    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.0.9.RELEASE'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.retry:spring-retry:1.1.2.RELEASE'
+    implementation 'org.apache.httpcomponents:httpmime'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.5.9'
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.2'
+    runtimeOnly 'org.flywaydb:flyway-core:6.4.1'
+    implementation 'org.postgresql:postgresql:9.4-1206-jdbc42'
+    runtimeOnly 'com.h2database:h2:1.4.200'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,11 @@
+server:
+  port: 8100
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  jackson:
+    parser:
+      allow-backslash-escaping-any-character: true
+  profiles:
+    active: dev
