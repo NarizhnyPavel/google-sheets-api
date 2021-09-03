@@ -39,7 +39,7 @@
 4. записывает значения в таблицу и возвращает url на лист таблицы, куда были записаны значения
 
 ### Авторизация
-Для использования google api используется OAuth2 авторизация, для которой требуются AuthCredentials (их возможно получить в [форме](./src/main/resources/static/template/OAuth%20token.html))
+Для обращения к google api используется OAuth2 авторизация, для которой требуются AuthCredentials (их возможно получить в [форме](./src/main/resources/static/template/OAuth%20token.html))
 
 ## Протестировать приложение -> [перейти](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
 1. регистрируемся с AuthCredentials по запросу `/register` для получения jwt token
