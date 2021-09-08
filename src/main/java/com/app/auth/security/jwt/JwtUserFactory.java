@@ -10,7 +10,7 @@ public final class JwtUserFactory  {
     public  static  JwtUser create (ApiCredentials user){
         return new JwtUser(
                 user.getId(),
-                user.getClientId(),
+                user.getLogin(),
                 user.getPassword(),
                 new SimpleGrantedAuthority("api")
         );

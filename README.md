@@ -39,33 +39,35 @@
 4. записывает значения в таблицу и возвращает url на лист таблицы, куда были записаны значения
 
 ### Авторизация
-Для обращения к google api используется OAuth2 авторизация, для которой требуются AuthCredentials (их возможно получить в [форме](./src/main/resources/static/template/OAuth%20token.html))
-
-## Протестировать приложение -> [перейти](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
-1. регистрируемся с AuthCredentials по запросу `/register` для получения jwt token
-2. добавляем полученный token в заголовок запросов (Блок **Authorize**)
-3. Отправляем запрос на `/api/sheets` 
+В приложении используется OAuth2 авторизация для доступа к googleApi. Для работы приложения необходимо получить refreshToken. Для этого:
+1. Получить AuthCode предоставив разрешения приложению по [ссылке](https://gooogle-sheets-api.herokuapp.com/token/auth)
+2. Получить refreshToken по запросу `/token/refresh` (необходим полученный AuthCode)
 
 ### Профили запуска
 
 **dev** используется для локального запуска с созданием h2 file base
-
 **api** для запуска приложения на heroku сервере
-
 **prom** использует подключение к postgres БД 
 
-### Сборка приложения
-0. удаляем директорию `./auth` содержит авторизацию для профиля **api**, поэтому _опционально_
+### Протестировать приложение -> [open-api (Swagger UI)](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
+1. Получить AuthCode предоставив разрешения приложению по [ссылке](https://gooogle-sheets-api.herokuapp.com/token/auth)
+2. Получить jwt token по запросу `/auth` (необходим полученный AuthCode)
+2. Добавить полученный token в заголовок запросов (Блок **Authorize** справа наверху swagger-ui)
+3. Отправить запрос на `/api/sheets`
 
+### Сборка приложения
+0. удалить директорию `./auth` содержит авторизацию для профиля **api**, поэтому _опционально_
+1. получить refreshToken по инструкции выше, вставить в [properties](./src/main/resources/application-prom.yml)   
 1. собираем jar
 ```shell script
-# загружает gradle wrapper 6.8
+# загружает gradle wrapper
 ./gradlew wrapper
 
 # сборка проекта, прогон unit-тестов
 ./gradlew clean build 
 ```
-2. запускаем docker-compose 
+
+3. запускаем docker-compose 
 ```shell script
 docker-compose up -d
 ```

@@ -15,7 +15,7 @@ public class JwtUser implements UserDetails {
 
     private final Long id;
 
-    private String clientId;
+    private String login;
 
     private String password;
 
@@ -33,7 +33,7 @@ public class JwtUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return clientId;
+        return login;
     }
 
     @JsonIgnore

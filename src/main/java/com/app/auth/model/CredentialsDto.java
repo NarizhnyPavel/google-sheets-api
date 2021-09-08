@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class CredentialsDto {
-    private String clientId;
-    private String clientSecret;
-    private String refreshToken;
+    private String login;
+    private String authCode;
 }

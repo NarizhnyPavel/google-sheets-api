@@ -1,15 +1,16 @@
 package com.app.auth.service;
 
-import com.app.api.model.InterceptorCredentials;
-import com.app.auth.domain.ApiCredentials;
-import com.app.auth.model.AuthPair;
+import com.app.api.InterceptorCredentials;
+import com.app.auth.model.AuthRequest;
 import com.app.auth.model.AuthResponse;
-import com.app.auth.model.CredentialsDto;
+import com.app.auth.model.TokenResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
 
-    ResponseEntity<AuthResponse> authenticate(AuthPair authPair);
+    ResponseEntity<AuthResponse> authenticate(AuthRequest authRequest);
+
+    ResponseEntity<TokenResponse> getRefreshToken(AuthRequest authRequest);
 
     InterceptorCredentials getCredentialsForCurrentUser();
 

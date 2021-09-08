@@ -3,7 +3,6 @@ package com.app.exceptions;
 import com.app.exceptions.model.ErrorDescription;
 import com.app.exceptions.model.ErrorResponse;
 import com.app.exceptions.model.ValidationErrorResponse;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.expression.AccessException;
@@ -23,7 +22,6 @@ import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-@Hidden
 @RestControllerAdvice(annotations = RestController.class)
 @Slf4j
 public class ExceptionController {

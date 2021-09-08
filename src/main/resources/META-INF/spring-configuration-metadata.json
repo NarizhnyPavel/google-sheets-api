@@ -1,6 +1,11 @@
 {
   "properties": [
     {
+      "name": "google-api.authCode",
+      "type": "java.lang.String",
+      "description": "AuthCode for google sheets api."
+    },
+    {
       "name": "google-api.clientId",
       "type": "java.lang.String",
       "description": "Client id for google sheets api."

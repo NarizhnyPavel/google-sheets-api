@@ -21,7 +21,7 @@ public class JwtAuthDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        ApiCredentials credit =  apiCredentialsRepository.findByClientId(s)
+        ApiCredentials credit =  apiCredentialsRepository.findByLogin(s)
                 .orElseThrow(() -> new EntityNotFoundException("Credentials not found."));
         return JwtUserFactory.create(credit);
     }
