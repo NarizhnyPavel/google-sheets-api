@@ -8,6 +8,5 @@ spring:
     password: postgres
 
 google-api:
-  clientId:
-  clientSecret:
+  authCode:
   refreshToken:

@@ -1,20 +1,22 @@
 package com.app.auth.service;
 
-import com.app.api.model.InterceptorCredentials;
+import com.app.api.CustomOAuthTokenInterceptor;
+import com.app.api.GoogleInterceptorFactory;
+import com.app.api.InterceptorCredentials;
 import com.app.auth.domain.ApiCredentials;
 import com.app.auth.domain.ApiCredentialsRepository;
-import com.app.auth.model.AuthPair;
+import com.app.auth.model.AuthRequest;
 import com.app.auth.model.AuthResponse;
-import com.app.auth.model.CredentialsDto;
+import com.app.auth.model.TokenResponse;
 import com.app.auth.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,23 +29,43 @@ public class AuthServiceImpl implements AuthService{
     private final ApiCredentialsRepository apiCredentialsRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final GoogleInterceptorFactory googleInterceptorFactory;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<AuthResponse> authenticate(AuthPair authPair) {
-        try {
-        apiCredentialsRepository.findByClientId(authPair.getClientId())
-                .orElseThrow(() -> new EntityNotFoundException("Credentials for this clientId not found"));
+    public ResponseEntity<AuthResponse> authenticate(AuthRequest authRequest) {
+        String login = String.valueOf(authRequest.getAuthCode().hashCode());
+        ApiCredentials apiCredentials = apiCredentialsRepository.findByLogin(login)
+                .orElseGet(() -> {
+                    InterceptorCredentials interceptorCredentials = new InterceptorCredentials().setAuthCode(authRequest.getAuthCode());
+                    CustomOAuthTokenInterceptor interceptor = googleInterceptorFactory.getInterceptor(interceptorCredentials);
+                    OAuth2AccessToken token = interceptor.getAccessToken();
+                    return new ApiCredentials()
+                            .setLogin(login)
+                            .setPassword(passwordEncoder.encode(authRequest.getAuthCode()))
+                            .setRefreshToken(token.getRefreshToken().getValue());
+                });
+        apiCredentialsRepository.save(apiCredentials);
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authPair.getClientId(), authPair.getClientSecret()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, authRequest.getAuthCode()));
 
-        String token = jwtTokenProvider.createToken(authPair.getClientId());
+        String token = jwtTokenProvider.createToken(login);
 
-        AuthResponse response = new AuthResponse().setAuthToken(token);
+        return ResponseEntity.ok(new AuthResponse().setAuthToken(token));
+    }
 
-        return ResponseEntity.ok(response);
-        } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Incorrect clientId or clientSecret");
-        }
+    @Override
+    public ResponseEntity<TokenResponse> getRefreshToken(AuthRequest authRequest) {
+        String login = String.valueOf(authRequest.getAuthCode().hashCode());
+        ApiCredentials apiCredentials = apiCredentialsRepository.findByLogin(login)
+                .orElseGet(() -> {
+                    InterceptorCredentials interceptorCredentials = new InterceptorCredentials().setAuthCode(authRequest.getAuthCode());
+                    CustomOAuthTokenInterceptor interceptor = googleInterceptorFactory.getInterceptor(interceptorCredentials);
+                    OAuth2AccessToken token = interceptor.getAccessToken();
+                    return new ApiCredentials().setRefreshToken(token.getRefreshToken().getValue());
+                });
+
+        return ResponseEntity.ok(new TokenResponse().setRefreshToken(apiCredentials.getRefreshToken()));
     }
 
     @Override
@@ -57,10 +79,9 @@ public class AuthServiceImpl implements AuthService{
 
         String username = authentication.getName();
 
-        ApiCredentials apiCredentials = apiCredentialsRepository.findByClientId(username)
+        ApiCredentials apiCredentials = apiCredentialsRepository.findByLogin(username)
                 .orElseThrow(() -> new EntityNotFoundException("Credentials not found."));
-        return new InterceptorCredentials().setClientId(apiCredentials.getClientId())
-                .setClientSecret(apiCredentials.getClientSecret())
+        return new InterceptorCredentials()
                 .setRefreshToken(apiCredentials.getRefreshToken());
     }
 }

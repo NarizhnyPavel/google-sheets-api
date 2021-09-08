@@ -12,6 +12,5 @@ spring:
     password:
 
 google-api:
-  clientId:
-  clientSecret:
+  authCode:
   refreshToken:

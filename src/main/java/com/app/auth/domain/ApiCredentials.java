@@ -19,14 +19,11 @@ public class ApiCredentials {
     @SequenceGenerator(name="seq_credentials", sequenceName="SEQ_CREDENTIALS", allocationSize = 1)
     private Long id;
 
-    @Column(name = "client_id")
-    private String clientId;
+    @Column(name = "login")
+    private String login;
 
     @Column(name = "password")
     private String password;
-
-    @Column(name = "client_secret")
-    private String clientSecret;
 
     @Column(name = "refresh_token")
     private String refreshToken;

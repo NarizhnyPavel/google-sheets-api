@@ -3,7 +3,7 @@ services:
   postgres_db:
     image: postgres
     container_name: postgres
-    restart: on-failure
+    restart: on-failure:3
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -11,6 +11,7 @@ services:
   google_api:
     build: .
     container_name: google-api
+    restart: on-failure:3
     environment:
       SPRING_PROFILES_ACTIVE: prom
       GOOGLE-API_CLIENTID: 460334817822-6ahvhi4snl7l0actahhbg9tik5cr50jv.apps.googleusercontent.com
