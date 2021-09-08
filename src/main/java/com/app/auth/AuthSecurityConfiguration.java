@@ -33,7 +33,7 @@ public class AuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers("/api/**").hasAuthority("api")
-                .antMatchers("/auth", "/register").permitAll()
+                .antMatchers("/auth", "/token/refresh", "/token/auth").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler)
                 .and()
