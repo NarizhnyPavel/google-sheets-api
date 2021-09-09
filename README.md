@@ -46,7 +46,9 @@
 ### Профили запуска
 
 **dev** используется для локального запуска с созданием h2 file base
+
 **api** для запуска приложения на heroku сервере
+
 **prom** использует подключение к postgres БД 
 
 ### Протестировать приложение -> [open-api (Swagger UI)](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
