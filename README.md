@@ -51,7 +51,7 @@
 
 ### Протестировать приложение -> [open-api (Swagger UI)](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
 1. Получить AuthCode предоставив разрешения приложению по [ссылке](https://gooogle-sheets-api.herokuapp.com/token/auth)
-2. Получить jwt token по запросу `/auth` (необходим полученный AuthCode)
+2. Получить jwt token по запросу `/token/auth` (необходим полученный AuthCode)
 2. Добавить полученный token в заголовок запросов (Блок **Authorize** справа наверху swagger-ui)
 3. Отправить запрос на `/api/sheets`
 
