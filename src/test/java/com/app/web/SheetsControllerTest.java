@@ -34,7 +34,7 @@ public class SheetsControllerTest {
     @Test
     void writeToGoogleSheets() throws Exception {
         final WriteResponse response = buildResponse();
-        when(googleSheetsService.writeToCompanyTable(any())).thenReturn(response);
+        when(googleSheetsService.writeToTable(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/sheets")
                 .content(gson.toJson(buildRequest()))

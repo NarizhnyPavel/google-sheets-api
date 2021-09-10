@@ -63,7 +63,7 @@ public class AuthRestTemplateConfiguration {
         restTemplate.getMessageConverters()
                 .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(
-                "https://www.googleapis.com/drive/v3");
+                "https://www.googleapis.com/drive/v3/files");
         restTemplate.setUriTemplateHandler(uriBuilderFactory);
         setIInterceptor(interceptorFactory, authService, environment, restTemplate);
         return restTemplate;

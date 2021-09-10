@@ -3,16 +3,20 @@ package com.app.config;
 import com.app.api.CustomOAuthTokenInterceptor;
 import com.app.api.GoogleInterceptorFactory;
 import com.app.api.InterceptorCredentials;
+import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -58,7 +62,7 @@ public class RestTemplateConfiguration {
         restTemplate.getMessageConverters()
                 .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(
-                "https://www.googleapis.com/drive/v3");
+                "https://www.googleapis.com/drive/v3/files");
         restTemplate.setUriTemplateHandler(uriBuilderFactory);
         setInterceptor(interceptorFactory, environment, restTemplate);
         return restTemplate;
@@ -81,6 +85,7 @@ public class RestTemplateConfiguration {
     public CloseableHttpClient httpClient() {
         return HttpClientBuilder
                 .create()
+                .setDefaultHeaders(Collections.singletonList(new BasicHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)))
                 .build();
     }
 

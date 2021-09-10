@@ -1,10 +1,8 @@
 package com.app.api.spreadsheets;
 
-import com.app.api.spreadsheets.model.BatchUpdateParams;
-import com.app.api.spreadsheets.model.SheetsPropertiesResponse;
-import com.app.api.spreadsheets.model.TableCreationResponse;
-import com.app.api.spreadsheets.model.WriteRequestParams;
+import com.app.api.spreadsheets.model.*;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -12,16 +10,18 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
-
-import static com.app.api.spreadsheets.model.SheetsPropertiesResponse.SheetPropertiesEntity;
+import java.util.Optional;
 
 @Service
 public class GoogleSheetsRestServiceImpl implements GoogleSheetsRestService{
 
     private final RestTemplate restTemplate;
 
-    private final int MAX_RETRIES_COUNT = 1;
+    @Value("${retries.max-count: 5}")
+    private final int MAX_RETRIES_COUNT = 5;
+    @Value("${retries.delay: 20000}")
     private final int RETRIES_DELAY = 20000;
 
     public GoogleSheetsRestServiceImpl(@Qualifier("googleSheetsRestTemplate") RestTemplate restTemplate) {
@@ -59,7 +59,7 @@ public class GoogleSheetsRestServiceImpl implements GoogleSheetsRestService{
     @Retryable(maxAttempts=MAX_RETRIES_COUNT, value = {HttpClientErrorException.class, HttpServerErrorException.class},
             backoff = @Backoff(delay = RETRIES_DELAY))
     public List<SheetPropertiesEntity> getSheetsProperties(String spreadsheetId){
-        return restTemplate.getForObject("/" + spreadsheetId + "?&fields=sheets.properties",
-                SheetsPropertiesResponse.class).getSheets();
+        return Optional.ofNullable(restTemplate.getForObject("/" + spreadsheetId + "?&fields=sheets.properties",
+                SheetsPropertiesResponse.class)).orElse(new SheetsPropertiesResponse()).getSheets();
     }
 }

@@ -5,6 +5,6 @@ import com.app.service.model.WriteResponse;
 
 public interface GoogleSheetsService {
 
-    WriteResponse writeToCompanyTable(GoogleSheetsWriteRequest googleSheetsWriteRequest);
+    WriteResponse writeToTable(GoogleSheetsWriteRequest googleSheetsWriteRequest);
 
 }

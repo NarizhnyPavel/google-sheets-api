@@ -2,8 +2,8 @@ package com.app.service.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.Accessors;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,5 +35,8 @@ public class GoogleSheetsWriteRequest {
      */
     @Nullable
     private List<String> conditionalRules;
+
+    @Nullable
+    private List<PermissionsRequestItem> permissions;
 
 }

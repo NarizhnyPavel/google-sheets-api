@@ -29,6 +29,16 @@
       "name": "jwt.token.expire",
       "type": "java.lang.String",
       "description": "Время жизни jwt токена."
+    },
+    {
+      "name": "retries.max-count",
+      "type": "java.lang.String",
+      "description": "Макс. количество попыток отправки запроса к google api."
+    },
+    {
+      "name": "retries.delay",
+      "type": "java.lang.String",
+      "description": "Задержка между отправками запросов."
     }
   ]
 }
