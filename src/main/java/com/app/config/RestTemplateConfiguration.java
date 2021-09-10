@@ -3,7 +3,6 @@ package com.app.config;
 import com.app.api.CustomOAuthTokenInterceptor;
 import com.app.api.GoogleInterceptorFactory;
 import com.app.api.InterceptorCredentials;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -19,14 +18,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Set;
 
 @Profile({"dev", "prom"})
 @Configuration
