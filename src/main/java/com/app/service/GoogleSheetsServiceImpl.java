@@ -1,5 +1,6 @@
 package com.app.service;
 
+import com.app.api.drive.GoogleDriveRestService;
 import com.app.api.spreadsheets.GoogleSheetsRestService;
 import com.app.api.spreadsheets.model.*;
 import com.app.service.domain.GoogleTable;
@@ -23,8 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.app.api.spreadsheets.model.SheetsPropertiesResponse.SheetPropertiesEntity;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,10 +31,11 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
 
     private final GoogleTableRepository googleTableRepository;
     private final GoogleTableSheetRepository googleTableSheetRepository;
-    private final GoogleSheetsRestService restService;
+    private final GoogleSheetsRestService sheetsRestService;
+    private final GoogleDriveRestService driveRestService;
 
     @Override
-    public WriteResponse writeToCompanyTable(GoogleSheetsWriteRequest request) {
+    public WriteResponse writeToTable(GoogleSheetsWriteRequest request) {
         log.info("writeToCompanyTable({}, {})", request.getTableName(),
                 request.getSheetName());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -57,11 +57,13 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
                                 .collect(Collectors.toList())
                                 .toString())
                         .collect(Collectors.toList()));
-        restService.writeToSpreadSheet(writeRequest);
+        sheetsRestService.writeToSpreadSheet(writeRequest);
         if (request.getSheetFormat() != null) {
             validateFormat(request.getSheetFormat());
             formatSheet(sheet, String.join(",", request.getSheetFormat()));
         }
+        if (request.getPermissions() != null && !request.getPermissions().isEmpty())
+            driveRestService.setPermissionsForFile(table.getSpreadSheetId(), false, request.getPermissions());
         log.info("writeToCompanyTable({}, {}): the values are recorded", request.getTableName(),
                 request.getSheetName());
         return new WriteResponse()
@@ -84,7 +86,7 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
         values.forEach(v -> columnsNumber.set(Math.max(v.size(), columnsNumber.get())));
 
         char beginColumn = 'A';
-        int beginRow = 0;
+        int beginRow = 1;
         if (request.getRange() != null && !request.getRange().isEmpty()) {
             String rangeBegin = request.getRange().split(":")[0];
             int rowNumberIndex = IntStream.range(0, rangeBegin.length())
@@ -94,7 +96,7 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
             beginRow = Integer.parseInt(rangeBegin.substring(rowNumberIndex));
         }
         request.setRange((beginColumn + "" + beginRow) + ":" +
-                ((char) (beginColumn + (columnsNumber.get() - 1))) + "" + (beginRow + (rowsNumber - 1)));
+                ((char) (beginColumn + (columnsNumber.get()))) + "" + (beginRow + (rowsNumber)));
     }
 
     /**
@@ -121,7 +123,7 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
                                     "        }" +
                                     "      }" +
                                     "    }"));
-                    ListCreationResponse response = restService.batchUpdate(batchUpdateParams, ListCreationResponse.class);
+                    ListCreationResponse response = sheetsRestService.batchUpdate(batchUpdateParams, ListCreationResponse.class);
                     GoogleTableSheet newSheet = new GoogleTableSheet(null, table, response.getSheetId(), sheetName);
                     googleTableSheetRepository.save(newSheet);
                     moveSheetToZeroIndex(newSheet);
@@ -135,7 +137,7 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
 
     private GoogleTable getGoogleTable(String tableName, String owner) {
         return googleTableRepository.findByTableNameAndOwner(tableName, owner).orElseGet(() -> {
-            TableCreationResponse response = restService.createTable(tableName);
+            TableCreationResponse response = sheetsRestService.createTable(tableName);
             assert response != null;
             GoogleTable googleTable = new GoogleTable(null, response.getSpreadSheetId(), tableName, owner, null);
             googleTableRepository.save(googleTable);
@@ -173,14 +175,14 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
                         "         \"fields\": \"userEnteredFormat, userEnteredValue\"" +
                         "      }" +
                         "   }"));
-        restService.batchUpdate(batchUpdateParams, Object.class);
+        sheetsRestService.batchUpdate(batchUpdateParams, Object.class);
     }
 
     private void formatSheet(GoogleTableSheet sheet, String sheetFormat){
         BatchUpdateParams batchUpdateParams = new BatchUpdateParams()
                 .setSpreadSheetId(sheet.getTable().getSpreadSheetId())
                 .setRequests(Collections.singletonList(sheetFormat.replace("SHEET_ID", String.valueOf(sheet.getSheetId()))));
-        restService.batchUpdate(batchUpdateParams, Object.class);
+        sheetsRestService.batchUpdate(batchUpdateParams, Object.class);
     }
 
     private void moveSheetToZeroIndex(GoogleTableSheet sheet){
@@ -195,11 +197,11 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
                         "        \"fields\": \"index\"" +
                         "      }" +
                         "    }"));
-        restService.batchUpdate(batchUpdateParams, Object.class);
+        sheetsRestService.batchUpdate(batchUpdateParams, Object.class);
     }
 
     public void updateSheets(GoogleTable table, String sheetName) {
-        List<SheetPropertiesEntity> sheetProperties = restService.getSheetsProperties(table.getSpreadSheetId());
+        List<SheetPropertiesEntity> sheetProperties = sheetsRestService.getSheetsProperties(table.getSpreadSheetId());
         sheetProperties.forEach(sheet -> {
             if (sheet.getTitle().equals("Лист1")) {
                 BatchUpdateParams batchUpdateParams = new BatchUpdateParams()
@@ -213,7 +215,7 @@ public class GoogleSheetsServiceImpl implements GoogleSheetsService {
                                 "          \"fields\": \"title\"" +
                                 "      }" +
                                 "    }"));
-                restService.batchUpdate(batchUpdateParams, SheetsPropertiesResponse.class);
+                sheetsRestService.batchUpdate(batchUpdateParams, SheetsPropertiesResponse.class);
                 sheet.setTitle(sheetName);
             }
             GoogleTableSheet googleTableSheet = googleTableSheetRepository.findByTableAndSheetId(table, sheet.getSheetId())

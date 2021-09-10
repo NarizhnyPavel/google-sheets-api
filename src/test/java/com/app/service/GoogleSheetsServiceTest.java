@@ -1,5 +1,6 @@
 package com.app.service;
 
+import com.app.api.drive.GoogleDriveRestService;
 import com.app.api.spreadsheets.GoogleSheetsRestService;
 import com.app.api.spreadsheets.model.WriteRequestParams;
 import com.app.service.domain.GoogleTable;
@@ -30,15 +31,18 @@ public class GoogleSheetsServiceTest {
 
     private final GoogleTableRepository googleTableRepository;
     private final GoogleTableSheetRepository googleTableSheetRepository;
-    private final GoogleSheetsRestService restService;
+    private final GoogleSheetsRestService sheetsRestService;
+    private final GoogleDriveRestService driveRestService;
 
     @Autowired
     public GoogleSheetsServiceTest(GoogleTableRepository googleTableRepository,
                                    GoogleTableSheetRepository googleTableSheetRepository,
-                                   GoogleSheetsRestService restService) {
-        this.restService = restService;
+                                   GoogleSheetsRestService sheetsRestService,
+                                   GoogleDriveRestService driveRestService) {
+        this.sheetsRestService = sheetsRestService;
         this.googleTableRepository = googleTableRepository;
         this.googleTableSheetRepository = googleTableSheetRepository;
+        this.driveRestService = driveRestService;
     }
 
     @Test
@@ -53,17 +57,17 @@ public class GoogleSheetsServiceTest {
                                 .collect(Collectors.toList())
                                 .toString())
                         .collect(Collectors.toList()))
-                .setRange("'" + sheet.getSheetName() + "'!B2:B2");
+                .setRange("'" + sheet.getSheetName() + "'!B2:C3");
 
         when(googleTableRepository.findByTableNameAndOwner(request.getTableName(), null))
                 .thenReturn(Optional.of(googleTable));
-        when(restService.getSheetsProperties(googleTable.getSpreadSheetId()))
+        when(sheetsRestService.getSheetsProperties(googleTable.getSpreadSheetId()))
                 .thenReturn(Collections.emptyList());
         when(googleTableSheetRepository.findByTableAndSheetName(googleTable, request.getSheetName()))
                 .thenReturn(Optional.of(sheet));
 
-        googleSheetsService.writeToCompanyTable(request);
-        verify(restService).writeToSpreadSheet(writeRequestParams);
+        googleSheetsService.writeToTable(request);
+        verify(sheetsRestService).writeToSpreadSheet(writeRequestParams);
     }
 
 }

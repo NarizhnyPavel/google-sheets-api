@@ -10,20 +10,4 @@ import java.util.Map;
 public class SheetsPropertiesResponse {
     @JsonProperty("sheets")
     private List<SheetPropertiesEntity> sheets;
-    @Data
-    public static class SheetPropertiesEntity {
-        @JsonProperty("sheetId")
-        private int sheetId;
-        @JsonProperty("title")
-        private String title;
-        @JsonProperty("index")
-        private int index;
-
-        @JsonProperty("properties")
-        private void unpackNested(Map props) {
-            this.sheetId = (int) props.get("sheetId");
-            this.title = (String) props.get("title");
-            this.index = (int) props.get("index");
-        }
-    }
 }

@@ -34,7 +34,7 @@ public class SheetsApiController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     WriteResponse writeToGoogleSheet(@RequestBody GoogleSheetsWriteRequest request){
-        return googleSheetsService.writeToCompanyTable(request);
+        return googleSheetsService.writeToTable(request);
     }
 
 }

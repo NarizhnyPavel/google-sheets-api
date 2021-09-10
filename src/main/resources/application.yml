@@ -10,6 +10,10 @@ spring:
   profiles:
     active: dev
 
+retries:
+  max-count: 1
+  delay: 20000
+
 google-api:
   clientId: 460334817822-6ahvhi4snl7l0actahhbg9tik5cr50jv.apps.googleusercontent.com
   clientSecret: amPG4CcLO5j-mu1dNMHZaZkw
