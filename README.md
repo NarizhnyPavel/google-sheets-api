@@ -11,7 +11,7 @@
 ## Описание api
 [Open-api (Swagger UI)](https://gooogle-sheets-api.herokuapp.com/swagger-ui.html)
 
-####**/api/sheets**
+**/api/sheets**
 
 Обязательные поля: `"tableName", "sheetName", "values"`
 
@@ -27,7 +27,7 @@
 3. вычисляет диапазон записи на основании преданных значений
 4. записывает значения в таблицу и возвращает url на лист таблицы, куда были записаны значения
 
-####/api/drive
+**/api/drive**
 
 `POST /api/drive/{fileId}` обновляет права доступа к файлу с удалением остальных прав
 
