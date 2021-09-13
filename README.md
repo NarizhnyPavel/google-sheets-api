@@ -56,7 +56,7 @@
 
 ### Сборка приложения
 0. удалить директорию `./auth` содержит авторизацию для профиля **api**, поэтому _опционально_
-1. получить refreshToken по инструкции выше, вставить в [properties](./src/main/resources/application-prom.yml)   
+1. получить authCode/refreshToken по инструкции выше, вставить в [environment](./docker-compose.yml) в одно из соответствующих полей   
 2. собираем jar
 ```shell script
 # загружает gradle wrapper

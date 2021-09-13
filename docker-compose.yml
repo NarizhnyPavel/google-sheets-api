@@ -14,9 +14,8 @@ services:
     restart: on-failure:3
     environment:
       SPRING_PROFILES_ACTIVE: prom
-      GOOGLE-API_CLIENTID: 460334817822-6ahvhi4snl7l0actahhbg9tik5cr50jv.apps.googleusercontent.com
-      GOOGLE-API_CLIENTSECRET: amPG4CcLO5j-mu1dNMHZaZkw
-      GOOGLE-API_REFRESHTOKEN: 1//0cEJPDB_nffFZCgYIARAAGAwSNwF-L9Irrw-SwPscXDfg8A8Auivy8RKvzkJsALszutRaU42LBjPUT30sNIW1-9_R2guPb4oConI
+      GOOGLE-API_AUTHCODE:
+      GOOGLE-API_REFRESHTOKEN:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/google_api
       TZ: Europe/Moscow
     ports:
